@@ -109,4 +109,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # Pour le déploiement, on utilise run_polling mais sans interaction
+    # Le -u dans le Procfile force l'affichage des logs en temps réel
+    print("🚀 Démarrage de Ebooklooker (mode production)...")
     main()
