@@ -30,7 +30,6 @@ logger = logging.getLogger(__name__)
 
 
 async def open_don_callback(update: Update, context):
-    """Redirige le bouton 'Faire un don' vers le menu de dons."""
     query = update.callback_query
     await query.answer()
     user = query.from_user
@@ -43,7 +42,6 @@ async def open_don_callback(update: Update, context):
 
 
 async def open_share_callback(update: Update, context):
-    """Redirige le bouton 'Partager' vers la commande share."""
     query = update.callback_query
     await query.answer()
     user = query.from_user
@@ -89,6 +87,8 @@ def main():
 
     # Callbacks
     app.add_handler(CallbackQueryHandler(handlers.language_callback, pattern=r"^lang_"))
+    app.add_handler(CallbackQueryHandler(handlers.new_search_callback, pattern=r"^new_search$"))
+    app.add_handler(CallbackQueryHandler(handlers.close_callback, pattern=r"^close_msg$"))
     app.add_handler(CallbackQueryHandler(download.download_callback, pattern=r"^dl\|"))
     app.add_handler(CallbackQueryHandler(donations.donation_callback, pattern=r"^don_\d+$"))
     app.add_handler(CallbackQueryHandler(open_don_callback, pattern=r"^open_don$"))

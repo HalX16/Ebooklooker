@@ -1,7 +1,7 @@
 # bot/download.py
 import os
 import requests
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from bot import database as db
 from bot import cache
@@ -14,18 +14,21 @@ def ensure_temp_dir():
     os.makedirs(TEMP_DIR, exist_ok=True)
 
 
+def post_download_keyboard(lang):
+    """Boutons proposés après un téléchargement réussi."""
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton(t(lang, "btn_new_search"), callback_data="new_search")],
+        [InlineKeyboardButton(t(lang, "btn_donate"), callback_data="open_don")],
+    ])
+
+
 async def download_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """
-    callback_data : 'dl|<id_cache>'
-    Ex: 'dl|a17'
-    """
     query = update.callback_query
     await query.answer("📥 Téléchargement en cours...")
 
     user = query.from_user
     lang = db.get_user_language(user.id) or "fr"
 
-    # On récupère les infos depuis le cache
     try:
         _, key = query.data.split("|", 1)
     except ValueError:
@@ -63,9 +66,11 @@ async def download_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text(t(lang, "download_error"))
         return
 
-    # Vérifie que le fichier n'est pas vide / pas du HTML d'erreur
     if not os.path.exists(filepath) or os.path.getsize(filepath) < 500:
-        os.remove(filepath) if os.path.exists(filepath) else None
+        try:
+            os.remove(filepath)
+        except Exception:
+            pass
         await query.message.reply_text(t(lang, "download_error"))
         return
 
@@ -74,6 +79,12 @@ async def download_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             document=open(filepath, "rb"),
             filename=filename,
             caption=f"📚 {title}"
+        )
+        # Message de suivi avec boutons
+        await query.message.reply_text(
+            t(lang, "download_done"),
+            parse_mode="Markdown",
+            reply_markup=post_download_keyboard(lang),
         )
     except Exception as e:
         print(f"Erreur envoi: {e}")

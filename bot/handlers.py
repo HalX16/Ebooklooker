@@ -16,11 +16,19 @@ def language_keyboard():
     return InlineKeyboardMarkup(keyboard)
 
 
-def actions_keyboard(lang):
-    """Boutons Don + Partage, réutilisables."""
+def main_menu_keyboard(lang):
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton(t(lang, "btn_new_search"), callback_data="new_search")],
+        [
+            InlineKeyboardButton(t(lang, "btn_donate"), callback_data="open_don"),
+            InlineKeyboardButton(t(lang, "btn_share"), callback_data="open_share"),
+        ],
+    ])
+
+
+def close_keyboard(lang):
     return InlineKeyboardMarkup([[
-        InlineKeyboardButton(t(lang, "btn_donate"), callback_data="open_don"),
-        InlineKeyboardButton(t(lang, "btn_share"), callback_data="open_share"),
+        InlineKeyboardButton(t(lang, "btn_close"), callback_data="close_msg"),
     ]])
 
 
@@ -38,7 +46,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             t(lang, "welcome", name=user.first_name),
             parse_mode="Markdown",
-            reply_markup=actions_keyboard(lang)
+            reply_markup=main_menu_keyboard(lang),
+            disable_web_page_preview=True,
         )
 
 
@@ -48,7 +57,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         t(lang, "help"),
         parse_mode="Markdown",
-        reply_markup=actions_keyboard(lang)
+        reply_markup=main_menu_keyboard(lang),
+        disable_web_page_preview=True,
     )
 
 
@@ -68,15 +78,41 @@ async def language_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.edit_message_text(
         t(lang, "language_set") + "\n\n" + t(lang, "welcome", name=user.first_name),
         parse_mode="Markdown",
-        reply_markup=actions_keyboard(lang)
+        reply_markup=main_menu_keyboard(lang),
+        disable_web_page_preview=True,
     )
+
+
+async def new_search_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    user = query.from_user
+    lang = db.get_user_language(user.id) or "fr"
+    await query.message.reply_text(
+        t(lang, "new_search_prompt"),
+        parse_mode="Markdown",
+        reply_markup=close_keyboard(lang),
+    )
+
+
+async def close_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    try:
+        await query.message.delete()
+    except Exception:
+        pass
 
 
 async def search_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
         user = update.effective_user
         lang = db.get_user_language(user.id) or "fr"
-        await update.message.reply_text(t(lang, "search_usage"))
+        await update.message.reply_text(
+            t(lang, "search_usage"),
+            parse_mode="Markdown",
+            reply_markup=close_keyboard(lang),
+        )
         return
     query = " ".join(context.args)
     await _do_search(update, context, query)
@@ -101,22 +137,29 @@ async def _do_search(update: Update, context: ContextTypes.DEFAULT_TYPE, query: 
     results = search_module.search(query, limit=5)
     text, markup = search_module.format_results(lang, query, results)
 
-    # On ajoute une ligne Don + Partage en bas des boutons de résultats
-    extra = [
-        [
-            InlineKeyboardButton(t(lang, "btn_donate"), callback_data="open_don"),
-            InlineKeyboardButton(t(lang, "btn_share"), callback_data="open_share"),
-        ]
-    ]
-    if markup:
-        for row in extra:
-            markup.inline_keyboard.append(row)
-    else:
-        markup = InlineKeyboardMarkup(extra)
+    # On reconstruit TOUJOURS un nouveau clavier à partir de zéro.
+    # Comme ça on ne touche JAMAIS à markup.inline_keyboard
+    new_keyboard = []
+
+    # 1) Récupère les boutons existants si markup est bien un clavier
+    if isinstance(markup, InlineKeyboardMarkup):
+        for row in markup.inline_keyboard:
+            new_keyboard.append(list(row))
+
+    # 2) Ajoute les boutons du bas
+    new_keyboard.append([
+        InlineKeyboardButton(t(lang, "btn_new_search"), callback_data="new_search")
+    ])
+    new_keyboard.append([
+        InlineKeyboardButton(t(lang, "btn_donate"), callback_data="open_don"),
+        InlineKeyboardButton(t(lang, "btn_share"), callback_data="open_share"),
+    ])
+
+    final_markup = InlineKeyboardMarkup(new_keyboard)
 
     await update.message.reply_text(
         text,
         parse_mode="Markdown",
         disable_web_page_preview=True,
-        reply_markup=markup
+        reply_markup=final_markup
     )

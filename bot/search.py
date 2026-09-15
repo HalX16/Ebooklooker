@@ -16,18 +16,15 @@ def _clean(text):
 def search_all(query, limit=5):
     results = []
 
-    # 1. Internet Archive (rapide, riche)
     for b in internet_archive.search_books(query, limit=limit):
         b["title"] = _clean(b.get("title", ""))
         results.append(b)
 
-    # 2. Gutenberg (souvent lent, timeout court)
     for b in gutenberg.search_books(query, limit=limit):
         b["source"] = "Gutenberg"
         b["title"] = _clean(b.get("title", ""))
         results.append(b)
 
-    # 3. Open Library (métadonnées seules)
     for b in open_library.search_books(query, limit=limit):
         results.append({
             "title": _clean(b["title"]),
@@ -53,6 +50,7 @@ def search_all(query, limit=5):
 
 
 def format_results(lang, query, results):
+    """Retourne (texte, clavier) — clavier peut être None si pas de résultats."""
     if not results:
         return t(lang, "no_results", query=query), None
 
@@ -86,8 +84,10 @@ def format_results(lang, query, results):
     if len(text) > 4000:
         text = text[:3990] + "\n\n…(tronqué)"
 
-    markup = InlineKeyboardMarkup(keyboard) if keyboard else None
-    return text, markup
+    # 🔒 On retourne TOUJOURS un tuple (texte, clavier_ou_None)
+    if keyboard:
+        return text, InlineKeyboardMarkup(keyboard)
+    return text, None
 
 
 def search(query, limit=5):
