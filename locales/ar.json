@@ -1,0 +1,23 @@
+{
+    "welcome": "👋 مرحبا {name}!\n\nمرحبا بك في *Ebooklooker* 📚\nأنا بوت للبحث عن الكتب وتحميلها.\n\n✍️ اكتب عنواناً أو مؤلفاً للبحث!",
+    "choose_language": "🌍 اختر لغتك:",
+    "language_set": "✅ تم تعيين اللغة إلى *العربية*.",
+    "help": "📖 *الأوامر:*\n/start - بدء\n/help - مساعدة\n/lang - تغيير اللغة\n/search - بحث (أو اكتب مباشرة)\n/don - دعم البوت\n/share - مشاركة البوت",
+    "btn_french": "🇫🇷 Français",
+    "btn_english": "🇬🇧 English",
+    "btn_arabic": "🇸🇦 العربية",
+    "search_usage": "🔍 اكتب عنواناً أو مؤلفاً.",
+    "searching": "🔍 جاري البحث عن: *{query}*...",
+    "no_results": "😕 لا توجد نتائج لـ *{query}*.",
+    "results_header": "📚 *نتائج البحث عن*: {query}\n━━━━━━━━━━━━━━━━━━━━",
+    "download_error": "❌ فشل التحميل. حاول لاحقاً.",
+    "btn_donate": "💝 تبرع",
+    "btn_share": "🔗 شارك",
+    "don_message": "💝 *ادعم Ebooklooker!*\n\nتبرعاتك تساعدنا على:\n• تغطية تكاليف الخادم\n• تحسين الميزات\n• إضافة مصادر جديدة\n\n🤲 شكراً لدعمك!",
+    "don_invoice_desc": "دعم Ebooklooker بـ {amount} نجمة",
+    "don_thanks": "🎉 *شكراً جزيلاً* على تبرعك بـ {amount} ⭐!\n\nدعمك يساعدنا كثيراً 💚",
+    "don_error": "❌ تعذر بدء الدفع. حاول لاحقاً.",
+    "share_message": "🔗 *شارك Ebooklooker!*\n\nساعد القراء الآخرين على اكتشاف البوت:\n@{bot}",
+    "share_button": "📤 شارك على تيليغرام",
+    "share_text": "اكتشف Ebooklooker، بوت للبحث عن الكتب وتحميلها مجاناً!"
+}

@@ -1,0 +1,23 @@
+{
+    "welcome": "👋 Hi {name}!\n\nWelcome to *Ebooklooker* 📚\nI'm a book search and download bot.\n\n✍️ Just type a title or author to search!",
+    "choose_language": "🌍 Choose your language:",
+    "language_set": "✅ Language set to *English*.",
+    "help": "📖 *Commands:*\n/start - Start\n/help - Help\n/lang - Change language\n/search - Search (or type directly)\n/don - Support the bot\n/share - Share the bot",
+    "btn_french": "🇫🇷 Français",
+    "btn_english": "🇬🇧 English",
+    "btn_arabic": "🇸🇦 العربية",
+    "search_usage": "🔍 Just type a title or author.",
+    "searching": "🔍 Searching for: *{query}*...",
+    "no_results": "😕 No results for *{query}*.",
+    "results_header": "📚 *Results for*: {query}\n━━━━━━━━━━━━━━━━━━━━",
+    "download_error": "❌ Download failed. Please try again later.",
+    "btn_donate": "💝 Donate",
+    "btn_share": "🔗 Share",
+    "don_message": "💝 *Support Ebooklooker!*\n\nYour donations help us:\n• Cover server costs\n• Improve features\n• Add new sources\n\n🤲 Thank you for your support!",
+    "don_invoice_desc": "Support Ebooklooker with {amount} Stars",
+    "don_thanks": "🎉 *Thank you so much* for your {amount} ⭐ donation!\n\nYour support helps us a lot 💚",
+    "don_error": "❌ Couldn't start payment. Try again later.",
+    "share_message": "🔗 *Share Ebooklooker!*\n\nHelp other readers discover the bot:\n@{bot}",
+    "share_button": "📤 Share on Telegram",
+    "share_text": "Check out Ebooklooker, a bot to search and download books for free!"
+}
